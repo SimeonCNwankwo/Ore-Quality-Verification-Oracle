@@ -1,0 +1,2 @@
+# Ore Quality Verification Oracle
+
