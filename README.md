@@ -123,3 +123,25 @@ npm test
 5. Start issuing certificates
 
 Ready to revolutionize ore trading with blockchain verification! 💎
+
+## 🆕 Recent Enhancements
+
+### Lab Blacklist Feature
+- 🛡️ **Lab Blacklisting**: Contract owner can blacklist labs to prevent fraud
+- 🔒 **Enhanced Security**: Immediate response to compromised laboratories
+- 📊 **Blacklist Query**: Check lab blacklist status in real-time
+
+### Updated Contract Architecture
+- **Blacklisted Labs**: Registry of prohibited laboratories preventing certificate issuance
+
+### New Key Functions
+- `blacklist-lab`: Mark laboratory as blacklisted (owner-only)
+- `is-lab-blacklisted`: Check if lab is blacklisted
+
+### Usage Example: Blacklist a Lab
+```clarity
+(contract-call? .Ore-Quality-Verification-Oracle blacklist-lab u1)
+```
+
+### Enhanced Security Features
+- **Lab blacklisting**: Owner-controlled mechanism to block fraudulent labs from issuing certificates

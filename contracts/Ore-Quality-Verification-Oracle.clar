@@ -48,6 +48,11 @@
     }
 )
 
+(define-map blacklisted-labs
+    { lab-id: uint }
+    { blacklisted: bool }
+)
+
 (define-data-var lab-counter uint u0)
 (define-data-var certificate-counter uint u0)
 (define-data-var contract-counter uint u0)
@@ -74,6 +79,10 @@
 
 (define-read-only (get-contract-counter)
     (var-get contract-counter)
+)
+
+(define-read-only (is-lab-blacklisted (lab-id uint))
+    (default-to false (get blacklisted (map-get? blacklisted-labs { lab-id: lab-id })))
 )
 
 (define-public (register-lab (name (string-ascii 50)) (lab-address principal) (certification (string-ascii 100)))
@@ -134,6 +143,7 @@
         )
         (asserts! (is-eq tx-sender (get address lab-data)) err-unauthorized)
         (asserts! (get active lab-data) err-invalid-lab)
+        (asserts! (not (default-to false (get blacklisted (map-get? blacklisted-labs { lab-id: lab-id })))) err-unauthorized)
         (asserts! (<= purity-percentage u100) err-invalid-certificate)
         (asserts! (> expiry-days u0) err-invalid-certificate)
         
@@ -251,10 +261,24 @@
         )
         (asserts! (is-eq tx-sender (get issued-by cert-data)) err-unauthorized)
         (asserts! (get verified cert-data) err-invalid-certificate)
-        
+
         (map-set certificates
             { certificate-id: certificate-id }
             (merge cert-data { verified: false })
+        )
+        (ok true)
+    )
+)
+
+(define-public (blacklist-lab (lab-id uint))
+    (let
+        (
+            (lab-data (unwrap! (map-get? labs { lab-id: lab-id }) err-not-found))
+        )
+        (asserts! (is-eq tx-sender contract-owner) err-owner-only)
+        (map-set blacklisted-labs
+            { lab-id: lab-id }
+            { blacklisted: true }
         )
         (ok true)
     )
