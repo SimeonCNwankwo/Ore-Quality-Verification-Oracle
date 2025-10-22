@@ -53,6 +53,16 @@
     { blacklisted: bool }
 )
 
+(define-map contract-disputes
+    { contract-id: uint }
+    {
+        disputed-by: principal,
+        reason: (string-ascii 200),
+        resolved: bool,
+        resolution: (optional (string-ascii 50))
+    }
+)
+
 (define-data-var lab-counter uint u0)
 (define-data-var certificate-counter uint u0)
 (define-data-var contract-counter uint u0)
@@ -301,4 +311,47 @@
                                 (/ (- (get expiry-date cert-data) current-height) u144))
         })
     )
+)
+
+(define-public (raise-dispute (contract-id uint) (reason (string-ascii 200)))
+    (let
+        (
+            (contract-data (unwrap! (map-get? export-contracts { contract-id: contract-id }) err-not-found))
+        )
+        (asserts! (or (is-eq tx-sender (get buyer contract-data)) (is-eq tx-sender (get seller contract-data))) err-unauthorized)
+        (asserts! (or (is-eq (get status contract-data) "pending") (is-eq (get status contract-data) "completed")) err-invalid-certificate)
+        (asserts! (is-none (map-get? contract-disputes { contract-id: contract-id })) err-already-exists)
+        (map-set contract-disputes
+            { contract-id: contract-id }
+            {
+                disputed-by: tx-sender,
+                reason: reason,
+                resolved: false,
+                resolution: none
+            }
+        )
+        (ok true)
+    )
+)
+
+(define-public (resolve-dispute (contract-id uint) (resolution (string-ascii 50)))
+    (let
+        (
+            (dispute-data (unwrap! (map-get? contract-disputes { contract-id: contract-id }) err-not-found))
+        )
+        (asserts! (is-eq tx-sender contract-owner) err-owner-only)
+        (asserts! (not (get resolved dispute-data)) err-invalid-certificate)
+        (map-set contract-disputes
+            { contract-id: contract-id }
+            (merge dispute-data {
+                resolved: true,
+                resolution: (some resolution)
+            })
+        )
+        (ok true)
+    )
+)
+
+(define-read-only (get-dispute (contract-id uint))
+    (map-get? contract-disputes { contract-id: contract-id })
 )

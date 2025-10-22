@@ -145,3 +145,36 @@ Ready to revolutionize ore trading with blockchain verification! 💎
 
 ### Enhanced Security Features
 - **Lab blacklisting**: Owner-controlled mechanism to block fraudulent labs from issuing certificates
+
+### Dispute Resolution for Export Contracts
+- ⚖️ **Dispute Mechanism**: Buyers and sellers can raise disputes on export contracts for quality or compliance issues
+- 🔍 **Owner Resolution**: Contract owner acts as arbitrator to resolve disputes with binding decisions
+- 📋 **Dispute Tracking**: Transparent record of disputes, reasons, and resolutions for accountability
+
+### Updated Contract Architecture
+- **Contract Disputes**: Map storing dispute details including raiser, reason, resolution status, and outcome
+
+### New Key Functions
+- `raise-dispute`: Allow buyer or seller to initiate a dispute on a contract
+- `resolve-dispute`: Enable contract owner to resolve disputes with a final decision
+- `get-dispute`: Query dispute details for a specific contract
+
+### Usage Example: Raise a Dispute
+```clarity
+(contract-call? .Ore-Quality-Verification-Oracle raise-dispute
+    u1
+    "Quality does not match certificate specifications"
+)
+```
+
+### Usage Example: Resolve a Dispute
+```clarity
+(contract-call? .Ore-Quality-Verification-Oracle resolve-dispute
+    u1
+    "Refund issued"
+)
+```
+
+### Enhanced Trust and Compliance Features
+- **Dispute resolution**: Provides a structured process for handling post-transaction disputes, enhancing trust in the platform
+- **Arbitration by owner**: Ensures fair and timely resolution of conflicts in ore trading agreements
