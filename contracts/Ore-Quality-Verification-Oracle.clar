@@ -355,3 +355,23 @@
 (define-read-only (get-dispute (contract-id uint))
     (map-get? contract-disputes { contract-id: contract-id })
 )
+
+(define-public (renew-certificate (certificate-id uint) (new-expiry-days uint))
+    (let
+        (
+            (cert-data (unwrap! (map-get? certificates { certificate-id: certificate-id }) err-not-found))
+            (lab-data (unwrap! (map-get? labs { lab-id: (get lab-id cert-data) }) err-invalid-lab))
+            (current-height burn-block-height)
+            (new-expiry-height (+ current-height (* new-expiry-days u144)))
+        )
+        (asserts! (is-eq tx-sender (get issued-by cert-data)) err-unauthorized)
+        (asserts! (get verified cert-data) err-invalid-certificate)
+        (asserts! (< current-height (get expiry-date cert-data)) err-certificate-expired)
+        (asserts! (> new-expiry-days u0) err-invalid-certificate)
+        (map-set certificates
+            { certificate-id: certificate-id }
+            (merge cert-data { expiry-date: new-expiry-height })
+        )
+        (ok true)
+    )
+)

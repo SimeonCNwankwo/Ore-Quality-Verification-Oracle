@@ -178,3 +178,14 @@ Ready to revolutionize ore trading with blockchain verification! 💎
 ### Enhanced Trust and Compliance Features
 - **Dispute resolution**: Provides a structured process for handling post-transaction disputes, enhancing trust in the platform
 - **Arbitration by owner**: Ensures fair and timely resolution of conflicts in ore trading agreements
+
+Certificate Renewal Feature
+
+The contract now includes a certificate renewal functionality, allowing labs to extend the expiry date of their issued certificates before expiration. This feature enhances the oracle's utility for long-term ore quality verification in supply chains by enabling seamless validity extensions.
+
+Key Benefits:
+
+Reduces the need for frequent certificate re-issuance.
+Improves operational efficiency for stakeholders.
+Maintains persistent certificate validity for ongoing contracts.
+Usage: Labs can call the renew-certificate function with the certificate ID and new expiry days to update the certificate's expiry date.
