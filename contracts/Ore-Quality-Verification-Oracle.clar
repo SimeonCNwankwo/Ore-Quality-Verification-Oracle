@@ -1,4 +1,4 @@
-(define-constant contract-owner tx-sender)
+(define-data-var contract-owner principal tx-sender)
 (define-constant err-owner-only (err u100))
 (define-constant err-not-found (err u101))
 (define-constant err-already-exists (err u102))
@@ -100,7 +100,7 @@
         (
             (lab-id (+ (var-get lab-counter) u1))
         )
-        (asserts! (is-eq tx-sender contract-owner) err-owner-only)
+        (asserts! (is-eq tx-sender (var-get contract-owner)) err-owner-only)
         (asserts! (is-none (map-get? labs { lab-id: lab-id })) err-already-exists)
         
         (map-set labs
@@ -124,7 +124,7 @@
         (
             (lab-data (unwrap! (map-get? labs { lab-id: lab-id }) err-not-found))
         )
-        (asserts! (is-eq tx-sender contract-owner) err-owner-only)
+        (asserts! (is-eq tx-sender (var-get contract-owner)) err-owner-only)
         (asserts! (get active lab-data) err-not-found)
         
         (map-set labs
@@ -285,7 +285,7 @@
         (
             (lab-data (unwrap! (map-get? labs { lab-id: lab-id }) err-not-found))
         )
-        (asserts! (is-eq tx-sender contract-owner) err-owner-only)
+        (asserts! (is-eq tx-sender (var-get contract-owner)) err-owner-only)
         (map-set blacklisted-labs
             { lab-id: lab-id }
             { blacklisted: true }
@@ -339,7 +339,7 @@
         (
             (dispute-data (unwrap! (map-get? contract-disputes { contract-id: contract-id }) err-not-found))
         )
-        (asserts! (is-eq tx-sender contract-owner) err-owner-only)
+        (asserts! (is-eq tx-sender (var-get contract-owner)) err-owner-only)
         (asserts! (not (get resolved dispute-data)) err-invalid-certificate)
         (map-set contract-disputes
             { contract-id: contract-id }
@@ -372,6 +372,18 @@
             { certificate-id: certificate-id }
             (merge cert-data { expiry-date: new-expiry-height })
         )
+        (ok true)
+    )
+)
+
+(define-read-only (get-contract-owner)
+    (var-get contract-owner)
+)
+
+(define-public (transfer-ownership (new-owner principal))
+    (begin
+        (asserts! (is-eq tx-sender (var-get contract-owner)) err-owner-only)
+        (var-set contract-owner new-owner)
         (ok true)
     )
 )

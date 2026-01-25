@@ -189,3 +189,29 @@ Reduces the need for frequent certificate re-issuance.
 Improves operational efficiency for stakeholders.
 Maintains persistent certificate validity for ongoing contracts.
 Usage: Labs can call the renew-certificate function with the certificate ID and new expiry days to update the certificate's expiry date.
+
+### Contract Ownership Transfer Feature
+
+- 🔑 **Ownership Transfer**: Enables secure transfer of contract ownership to new principals
+- 🛡️ **Enhanced Governance**: Supports decentralized management and operational flexibility
+- 📋 **Owner Visibility**: Public query for current contract owner
+
+### Updated Contract Architecture
+
+- **Mutable Owner**: Contract owner now stored as data variable for transferability
+
+### New Key Functions
+
+- `transfer-ownership`: Transfer ownership to specified principal (owner-only)
+- `get-contract-owner`: Retrieve the current contract owner
+
+### Usage Example: Transfer Ownership
+
+```clarity
+(contract-call? .Ore-Quality-Verification-Oracle transfer-ownership 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM)
+```
+
+### Enhanced Governance Features
+
+- **Ownership transfer**: Facilitates smooth transitions in contract administration
+- **Access control**: Maintains strict owner-only permissions for critical operations
